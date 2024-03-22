@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+{% block title %} Search Page {% endblock %}
+
+{% block addtionalLink %}
+
+<link rel="stylesheet" type="text/css" href="Frontend/styles/switchStyle.css">
+
+{% endblock %}
+
+{% block content %}
+
+<div class="home">
+
+  <!-- Hero Slider -->
+  <div class="hero_slider_container centerAll" style="padding: 140px 0px 40px 10px;">
+
+
+    <form action="/consultProcess" method="post" class="formFormat" id="consultForm">
+      <!-- Alert input, if use does not pass programing language value-->
+      <div class="alert alert-danger" role="alert" id="alertPL" hidden>
+        Programming language can not be empty
+      </div>
+
+      <!-- switch mode: search or consult -->
+      <div class="form-row align-items-center">
+        <div class="form-group col-md-2"></div>
+        <div class="form-group col-md-2 textBoldColor afterChoose" style="text-align: right;" id="consultJob"> Consult
+          Job
+        </div>
+
+        <div class="form-group col-md-3 d-flex align-items-center justify-content-center">
+          <input type="checkbox" name="checkbox" id="switchMode" class="input-toggle" />
+          <div class="checkbox__container">
+            <label for="switchMode" class="label-for-toggle">
+              <span class="ball arrow">
+                <i class="fas fa-arrow-right"></i>
+              </span>
+            </label>
+          </div>
+
+        </div>
+        <div class="form-group col-md-2 textBoldColor beforeChoose" style="text-align: left;" id="consultCourse">
+          Consult Course
+        </div>
+        <div class="form-group col-md-2"></div>
+
+      </div>
+
+
+      <div class="form-row">
+        <div class="form-group col-md-8">
+          <div class="form-row">
+  
+          <div class="col-7">
+            <div class="form-group">
+              <label for="exampleInputEmail1" class="textBoldColor">Programming Language:</label>
+            </div>
+            <div class="form-row" style="padding-left: 10px;">
+
+              {% for level in ["Basic", "Intermediate", "Advanced"] %}
+              <div class="form-group col-md-3">
+                <input type="text" class="bgYellow form-control textBoldColor" style="font-size: 14px;" id="fwLabel" value="{{level}}" readonly>
+              </div>
+              <div class="form-group col-md-9">
+                <input type="text" class="form-control" id="{{level}}PL" name="{{level.upper()}}PL" value="">
+              </div>
+              {% endfor %}
+
+            </div>
+
+            <div class="form-group" style="padding-top: 12px;">
+              <label for="exampleInputEmail1" class="textBoldColor">Framework:</label>
+            </div>
+            <div class="form-row" style="padding-left: 10px;">
+              {% for level in ["Basic", "Intermediate", "Advanced"] %}
+              <div class="form-group col-md-3">
+                <input type="text" class="bgYellow form-control textBoldColor"  style="font-size: 14px;" id="fwLabel" value="{{level}}" readonly>
+              </div>
+              <div class="form-group col-md-9">
+                <input type="text" class="form-control" id="{{level}}PL" name="{{level.upper()}}FW" value="">
+              </div>
+              {% endfor %}
+            </div>
+
+          </div>
+
+          <div class="col-5">
+            <div class="form-group" style="padding-top: 15px;">
+              <label for="exampleInputEmail1" class="textBoldColor">Knowledge</label>
+              <input type="text" class="form-control" id="exampleInputEmail1" name="knowledge"
+                aria-describedby="emailHelp" placeholder="Separate by comma ','" value="">
+            </div>
+            <div class="form-group">
+              <label for="exampleInputEmail1" class="textBoldColor">Platfrom</label>
+              <input type="text" class="form-control" id="exampleInputEmail1" name="platform"
+                aria-describedby="emailHelp" placeholder="Separate by comma ',' " value="">
+            </div>
+            <div class="form-group">
+              <label for="exampleInputEmail1" class="textBoldColor">Tool</label>
+              <input type="text" class="form-control" id="exampleInputEmail1" name="tool" aria-describedby="emailHelp"
+                placeholder="Separate by comma ','" value="">
+            </div>
+            <div class="form-group" hidden id="targetJob" style="height: 40px;">
+              <label for="exampleInputEmail1" class="textBoldColor">Target Job</label>
+                <div class="dropdown">
+                  <select id="targetJobVal" name="targetJobVal" class="dropdownCustom textBoldBlack">
+                    {% for job in jobList %}
+                      <option value="{{job}}" >{{job}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+            </div>
+          
+            <div class="form-group " style="height: 50px;" >
+              <button id="findCourseButton" type="submit" 
+                class="search_submit_button buttonBorder bgOrange textBoldColor" value="findCourse">Consult</button>
+            </div>
+            <div class="form-group " style="padding-bottom: 100px;">
+              
+              <a href="/consult" id="consulter"
+                class="btn button button1 search_submit_button buttonBorder bgOrange textBoldColor">Consult by my
+                skill</a>
+            </div>
+
+          </div>
+          </div>
+
+
+          <div class="form-row">
+            <!-- Check mode or find mode -->
+            <input type="text" id="option" name="option" value="job" readonly hidden>
+
+          </div>
+        </div>
+
+
+        <div class="form-group col-md-4" style="padding-bottom: 20px; padding-left: 20px;">
+          <img id="imgSearch" src="Frontend/images/consult.gif" width="400" height="500">
+        </div>
+      </div>
+
+
+    </form>
+
+
+
+  </div>
+
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+
+
+  $(document).ready(function () {
+
+    function updateConsulterLink() {
+
+      var typeConsult = $('#switchMode').is(':checked') ? 'course' : 'job';
+      var targetJob = $('#targetJobVal').val();
+      var consulterLink = '/consultByUserData?typeConsult=' + typeConsult + '&targetJobVal='+ targetJob;
+
+      var consulterHref = '{{ user }}' === 'Unknown' ? '/login' : consulterLink;
+
+      // Update the link
+      $('#consulter').attr('href', consulterHref);
+    }
+
+
+
+    // This function runs when the document is ready
+    // check the mode of consult
+    $('#switchMode').change(function () {
+      updateConsulterLink();
+
+      // This function runs every time the checkbox state changes
+      if ($('#switchMode').is(':checked')) {
+        $("#consultCourse").addClass('afterChoose').removeClass('beforeChoose');
+        $("#consultJob").addClass('beforeChoose').removeClass('afterChoose');
+        $('#imgSearch').attr('src', 'Frontend/images/consult2.gif');
+
+        document.getElementById("targetJob").removeAttribute('hidden');
+        document.getElementById("option").value = "course";
+
+
+
+
+      } else {
+        $("#consultJob").addClass('afterChoose').removeClass('beforeChoose');
+        $("#consultCourse").addClass('beforeChoose').removeClass('afterChoose');
+        $('#switchMode').prop('checked', false);
+        $('#imgSearch').attr('src', 'Frontend/images/consult.gif');
+
+        document.getElementById("targetJob").setAttribute('hidden', 'true');
+        document.getElementById("option").value = "job";
+
+      }
+
+
+    });
+
+    updateConsulterLink();
+
+
+
+  });
+
+
+
+
+
+</script>
+
+{% endblock %}

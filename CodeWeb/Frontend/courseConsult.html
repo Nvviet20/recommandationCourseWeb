@@ -1,0 +1,294 @@
+{% extends "base.html" %}
+{% block title %} Job Result {% endblock %}
+{% block addtionalLink %}
+<link rel="stylesheet" type="text/css" href="Frontend/styles/main_styles.css">
+<link rel="stylesheet" type="text/css" href="Frontend/styles/cardBorder.css">
+{% endblock %}
+
+
+{% block content %}
+
+<style>
+	/* Custom scroll menu for course cards */
+	.scrollmenu {
+		background-color: #F6F1E9;
+		/* Background color */
+		overflow-x: auto;
+		/* Enable horizontal scrolling */
+		overflow-y: hidden;
+		/* Prevent vertical scrolling */
+		white-space: nowrap;
+		/* Ensure inline behavior for child elements */
+		display: flex;
+		/* Use flexbox layout */
+		flex-wrap: nowrap;
+		/* Prevent wrapping of items */
+	}
+
+	.scrollmenu .form-row {
+		display: inline-flex;
+		/* Display as inline-flex to respect the nowrap of parent */
+		flex: 0 0 auto;
+		/* Do not grow, do not shrink, basis is auto */
+		margin-right: 10px;
+		/* Add some space between the cards */
+		min-width: 50px;
+		/* Minimum width for each card */
+	}
+
+	/* Remove margin-right from the last card */
+	.scrollmenu .form-row:last-child {
+		margin-right: 0;
+	}
+
+
+	/* You might not need these rules if you don't use <a> tags inside your scrollmenu, but they're here if you need them for other elements */
+	.scrollmenu a {
+		display: inline-block;
+		color: white;
+		text-align: center;
+		padding: 14px;
+		text-decoration: none;
+	}
+
+	.scrollmenu a:hover {
+		background-color: #FFD93D;
+	}
+
+
+	div.scrollmenu div:hover {
+		background-color: #9fd3fc;
+	}
+
+	.cardStyle {
+		border: 1px;
+		border-radius: 5px;
+		border-color: #FFB607;
+	}
+
+	.customRow .row-row {
+		padding-right: 5px;
+	}
+</style>
+
+<div class="container" style="padding-top: 40px; padding-bottom: 50px;">
+
+	<div class="container" style="padding: 140px 0px 40px 10px;">
+		<div class="row">
+			<div class="col-md-4">
+				<div class="card">
+					<div class="card-header bgOrange" style="text-align: center;">
+						<p class="textBoldColor" style="font-size: 20px; height: 30px;">
+							{{content["JobRequired"]["CareerName"].to_string(index=False)}}</p>
+					</div>
+					<div class="card-body bgCream" style="padding-top: 10px; ">
+						<div class="row">
+							<div class="col-md-8">
+								<div class="dropdown">
+									<select id="sortByDropdown" name="sortByDropdown" class="dropdownCustom">
+										{% for job in content["JobList"] %}
+										<a href="/courseConsult">
+											<option value="{{job}}">{{job}}</option>
+										</a>
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<input type="text" class="bgYellow form-control textBoldColor" id="sortByOption"
+									value="Change" readonly>
+							</div>
+
+						</div>
+						<div class="row columnScroller"
+							style="height: 300px; background-color: #F6F1E9; padding-left: 0%;width: 100%;">
+							<label class="textBoldColor">Required Skill:</label>
+							<label class="textBoldBlack"> </label>
+							<ul>
+								{% for skill in ["ProgrammingLanguage", "Framework", "Knowledge", "Platform",
+								"Tool"] %}
+								<li><span class="textBoldColor">{{skill}}:</span>
+									{{content["JobRequired"][skill].tolist()}}</li>
+								{% endfor %}
+							</ul>
+						</div>
+
+					</div>
+				</div>
+			</div>
+			<div class="col-md-8">
+				{% for i in range(3) %}
+				{% for j in range(3) %}
+
+				<div class="row bgYellow textBoldColor justify-content-center">
+					Learning Path {{i + 1}} - {{j + 1}}. Include: {{content["RecommandCourse"][j]["CoursePath"][i]["TotalLength"]}} Course(s)
+				</div>
+				<div class="form-row scrollmenu">
+					{% for course in content["RecommandCourse"][j]["CoursePath"][i] %}
+					<div class="form-group col-md-5 cardStyle">
+						<div class="p-2 p-md-2 ">
+							<h4 class="billing-heading mb-3 textBoldBlack" style="text-align: center;word-wrap: break-word;   white-space: normal;							">
+								{{course["CourseName"]}}
+							</h4>
+							<div class="row">
+								<div class="col-md-12">
+								<div class="row">
+									{% if loop.index % 2 == 0 %}
+									<img src="Frontend/images/CuteGirl2.webp" style="width: 100%;">
+									{% else %}
+									<img src="Frontend/images/CuteGirl.webp" style="width: 100%;">
+									{% endif %}
+								</div>
+								<div class="row">
+									<div class="col-md-6">
+									<label class="textBoldColor"> Matched: 10/12</label></div>
+									<div class="col-md-6">
+									<label class="textBoldBlack"> Level:  {{course["Level"]}} </label></div>
+								</div>
+								<div class="row">
+									<div class="col-md-6">
+									<label class="textBoldColor"> Price:  {{course["Price"]}} $</label></div>
+									<div class="col-md-6">
+									<label class="textBoldBlack"> Duration:  {{course["Duration"]}} h</label></div>
+								</div>
+								<div class="row">
+									<div class="col-md-6">
+									<label class="textBoldColor"> Enroll: {{course["Enroll"]}}</label></div>
+									<div class="col-md-6">
+									<label class="textBoldColor"> Rating: {{course["Rate"]}}</label></div>
+								</div>
+
+					
+
+								<div class="row ">
+									<div class="col-md-2 ">
+										<a href="{{course['Link']}}" style="color: #FFB607; font-weight: bold;">Learn</a>
+									</div>
+									<div class="col-md-7 ">
+									</div>
+								</div>
+								
+								</div>
+							</div>
+
+
+						</div>
+
+					</div>
+					<div class="form-group col-md-2 align-self-center">
+						<img src="Frontend/images/rightArrow.png" style="width: 100%;">
+					</div>
+					{% endfor %}
+					<div class="form-group col-md-4 cardStyle align-self-center">
+						<div class="borderCus  p-2 p-md-2 ">
+							<div class="">
+								<h4 class="billing-heading mb-3 textBoldColor" style="text-align: center;">
+									Sumerize
+								</h4>
+								<div class="row" style="padding-left: 10px;">
+									<div class="col-md-12">
+										<div class="row justify-content-center">
+											<img src="Frontend/images/sumerize.jpeg" style="width: 50%;">
+										</div>
+										<div class="row">
+											<label class="textBoldColor"> Total Time: </label>
+											<label class="textBoldBlack"> {{content["RecommandCourse"][j]["CoursePathInfor"][i]["TotalDuration"]}} hour(s)</label>
+
+										</div>
+										<div class="row">
+											<label class="textBoldColor"> Total Price:</label>
+											<label class="textBoldBlack">  {{content["RecommandCourse"][j]["CoursePathInfor"][i]["TotalPrice"]}} $</label>
+
+										</div>
+										<div class="row customRow">
+											<label class="textBoldColor">Skill Will gain:</label>
+											<ul>
+												<li>ProgrammingLanguage: Java</li>
+												<li>Framework: Spring</li>
+												<li>Knowledge: OOP</li>
+
+											</ul>
+										</div>
+									</div>
+
+								</div>
+							</div>
+
+
+						</div>
+					</div>
+
+				</div>
+				{% endfor %}
+				{% endfor %}
+
+			</div>
+
+		</div>
+	</div>
+
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+	integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+	crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"
+	integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+"
+	crossorigin="anonymous"></script>
+<script>
+	function checkEmpty(property) {
+		if (property.length === 0) { return false; }
+		return true;
+	}
+	function checkEmail(email) {
+		var filter = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+		if (email.length === 0) {
+			return false;
+		}
+		if (filter.test(email) === false) { return false; }
+		return true;
+	}
+
+	$('#frmCheckOut').on('submit', function (e) {
+		const Name = document.querySelector('#Name').value;
+		const Address = document.querySelector('#Address').value;
+		const Phone = document.querySelector('#Phone').value;
+		//const pay = document.querySelector('#payMethod').value;
+		//const con = document.querySelector('#condition').value;
+
+		const email = document.querySelector('#Email').value; var check = true;
+		if (checkEmpty(Name) === false) {
+			check = false;
+			document.querySelector('#labelName').style.visibility = 'visible';
+		} else
+			document.querySelector('#labelName').style.visibility = 'invisible';
+		if (checkEmpty(Address) === false) {
+			check = false;
+			document.querySelector('#labelAddress').style.visibility = 'visible';
+		} else
+			document.querySelector('#labelAddress').style.visibility = 'invisible';
+		if (checkEmpty(Phone) === false) {
+			check = false;
+			document.querySelector('#labelPhone').style.visibility = 'visible';
+		} else
+			document.querySelector('#labelPhone').style.visibility = 'invisible';
+		if (checkEmail(email) === false) {
+			check = false;
+			document.querySelector('#labelEmail').style.visibility = 'visible';
+		}
+
+
+		if (check === false) {
+			e.preventDefault();
+			alert('Please fill all information');
+		}
+	});
+
+
+</script>
+
+
+{% endblock %}
